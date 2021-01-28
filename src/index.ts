@@ -92,7 +92,7 @@ function processTemplateData() {
 
 function getFileContent() {
     if (!/\.md$/.test(conf.config.outfile) && conf.config.outfileTemplatePath === path.resolve(conf.root, './template/md')) {
-        conf.config.outfileTemplatePath = path.resolve(conf.root, './template/html')
+        conf.config.outfileTemplatePath = path.resolve(__dirname, '../template/html')
     }
     conf.config.content = getContent()
 }
