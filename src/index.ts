@@ -34,7 +34,7 @@ async function main() {
     conf.config = Object.assign({}, conf.config, {
         outfile: path.resolve(conf.root, './reportLog'),
         outfiletype: 'md',
-        outfileTemplatePath: path.resolve(conf.root, './template/md')
+        outfileTemplatePath: path.resolve(__dirname, '../template/md')
     }) as PConfig
     conf.setProcessArgvToConfig()
     conf.setProcessEnvToConfig()
