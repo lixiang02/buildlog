@@ -1,0 +1,4 @@
+### Git Log
+    {@#list@}
+    * *{@title@}*: {@value@}
+    {@/list@}

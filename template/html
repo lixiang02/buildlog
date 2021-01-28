@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h3>Git Log</h3>
+        <ul>
+            {@#list@}
+                <li>
+                    <strong>{@title@}</strong>: {@value@}
+                </li>
+            {@/list@}
+        </ul>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "buildlog",
+  "version": "0.0.2",
+  "description": "",
+  "main": "dist/index.js",
+  "bin": "./bin/www",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "yarn build",
+    "publish:patch": "yarn publish --patch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/shelljs": "^0.8.8",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@mcfed/cra-render": "^0.0.4",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1",
+    "shelljs": "^0.8.4"
+  }
+}
