@@ -69,7 +69,7 @@ function processTemplateData() {
         { title: 'Commit', value: conf.config.commit },
         { title: 'Merge', value: conf.config.merge },
         { title: 'Author', value: conf.config.author },
-        { title: 'CommitDate', value: moment(conf.config.date).format(format) },
+        { title: 'CommitDate', value: moment(new Date(conf.config.date)).format(format) },
         { title: 'Fix', value: conf.config.fix },
         { title: 'Time', value: moment(new Date()).format(format) },
     ]}, conf.config.templateData)
