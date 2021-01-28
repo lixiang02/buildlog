@@ -30,9 +30,9 @@ export class ConfigBox {
     public setProcessArgvToConfig(key:string = '_argv') {
         const args:Array<string> = (process && process.argv || []).map(e => e.trim()).filter(e => e)
         const data:ICustomObj = {}
-        for (let i = 0; i < args.length - 1; i++) {
+        for (let i = 0; i < args.length; i++) {
             const value = args[i]
-            const nextValue = /^--/.test(args[i + 1]) ? true : args[i + 1]
+            const nextValue = !args[i+1] || /^--/.test(args[i + 1]) ? true : args[i + 1]
             if (/^--/.test(value)) {
                 const key = value.replace(/^--/, '')
                 data[key] = nextValue
