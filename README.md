@@ -9,13 +9,13 @@ npm install buildlog --save-dev
 
 运行命令：
 ```
-npm run buildlog
+npx buildlog
 ```
 
 命令参数：
 ```
 --outfile <path> 制定输出文件路径，默认值是 ./reportLog
---outfiletype <md|html> 制定输出文件类型，默认是 md, 可选类型 html
+--help
 ```
 配置文件：
 - 运行命令所在路径下的 `buildlog.config.json` 或者 `buildlog.config.js`
@@ -24,10 +24,29 @@ npm run buildlog
 ```
 {
     outfile: '',
-    outfiletype: '',
     templateData: {},
     outfileTemplatePath: '',
     handleTemplateData: (templateData, config) => { return templateData }
 }
 ```
 允许用户自定义模版，修改模版数据，生成自定义的构建日志或者添加日志数据等。
+
+增加默认模版数据：
+```
+module.exports = {
+    templateData: {
+        list: [
+            { title: 'Version', value: 'v0.0.1' }
+        ]
+    }
+}
+```
+
+ 自定义模版：
+ 使用模版渲染模块是`@mcfed/cra-render`, `tag` 是 `{@ @}`
+ ```
+ ### Git Log
+    {@#list@}
+    * *{@title@}*: {@value@}
+    {@/list@}
+ ```

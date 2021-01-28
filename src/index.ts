@@ -7,7 +7,6 @@ import shell from './shell'
 
 export interface PConfig extends IConfig {
     outfile: string
-    outfiletype: string
     outfileTemplatePath: string
     templateData: ITemplateData
     handleTemplateData: (templateData: ITemplateData, config?: PConfig) => ITemplateData
@@ -23,18 +22,13 @@ export interface ITemplateDataItem {
 
 const format = 'YYYY-MM-DD HH:mm:ss'
 
-const OUT_FILE_TYPE: ICustomObj = {
-    'md': 'md', 
-    'html': 'html' 
-}
-
 async function main() {
     shell.checkGit()
 
     conf.config = Object.assign({}, conf.config, {
-        outfile: path.resolve(conf.root, './reportLog'),
-        outfiletype: 'md',
-        outfileTemplatePath: path.resolve(__dirname, '../template/md')
+        outfile: path.resolve(conf.root, './reportLog.md'),
+        outfileTemplatePath: path.resolve(__dirname, '../template/md'),
+        templateData: {}
     }) as PConfig
     conf.setProcessArgvToConfig()
     conf.setProcessEnvToConfig()
@@ -42,7 +36,7 @@ async function main() {
 
     processArgs()
 
-    conf.config.outfilePath = conf.config.outfile + '.' + conf.config.outfiletype
+    conf.config.outfilePath = getOutfilePath()
 
     conf.config.tmpFilePath = conf.config.outfile + '-tmp'
 
@@ -64,23 +58,43 @@ async function main() {
 
     console.log('git log file ouput success, ' + conf.config.outfilePath)
 }
+function getOutfilePath() {
+    if (!/\.\w+$/.test(conf.config.outfile)) {
+        conf.config.outfile = conf.config.outfile + '.md'
+    }
+    return conf.config.outfile
+}
+
 function processTemplateData() {
-    conf.config.templateData = Object.assign({}, {list:[
+    let list = [
         { title: 'Commit', value: conf.config.commit },
-        { title: 'Merge', value: conf.config.merge },
         { title: 'Author', value: conf.config.author },
         { title: 'CommitDate', value: moment(new Date(conf.config.date)).format(format) },
-        { title: 'Fix', value: conf.config.fix },
         { title: 'Time', value: moment(new Date()).format(format) },
-    ]}, conf.config.templateData)
+    ]
+    if (conf.config.merge) {
+        list.push({ title: 'Merge', value: conf.config.merge })
+    }
+    if (conf.config.fix) {
+        list.push({ title: 'Fix', value: conf.config.fix })
+    }
+    if (conf.config.feat) {
+        list.push({ title: 'Feat', value: conf.config.feat })
+    }
+    if (conf.config.docs) {
+        list.push({ title: 'Docs', value: conf.config.docs })
+    }
+    if (conf.config.templateData.list && Array.isArray(conf.config.templateData.list)) {
+        list = list.concat(conf.config.templateData.list) 
+    }
+    conf.config.templateData.list = list
 }
 
 function getFileContent() {
-    if (OUT_FILE_TYPE[conf.config.outfiletype] !== 'md' && conf.config.outfileTemplatePath === path.resolve(conf.root, './template/md')) {
-        conf.config.outfileTemplatePath = path.resolve(conf.root, './template/' + OUT_FILE_TYPE[conf.config.outfiletype])
+    if (!/\.md$/.test(conf.config.outfile) && conf.config.outfileTemplatePath === path.resolve(conf.root, './template/md')) {
+        conf.config.outfileTemplatePath = path.resolve(conf.root, './template/html')
     }
     conf.config.content = getContent()
-
 }
 
 function getContent() {
@@ -101,6 +115,10 @@ function processGitLogMessage (result: string) {
             conf.config.date = value.replace(/^Date:/, '').trim()
         } else if (/^fix:/.test(value)) {
             conf.config.fix = value.replace(/^fix:/, '').trim()
+        } else if (/^feat:/.test(value)) {
+            conf.config.feat = value.replace(/^feat:/, '').trim()
+        } else if (/^docs:/.test(value)) {
+            conf.config.docs = value.replace(/^docs:/, '').trim()
         }
     }
 }
@@ -114,15 +132,12 @@ function processArgs() {
         console.log('')
         console.log('--outfile <path> ,defaultValue: ./reportLog \n')
         console.log('')
-        console.log('--outfiletype <md|html> ,defaultValue: md \n')
+        console.log('--help\n')
         console.log('')
         process.exit(0)
     }
     if (conf?.config?._argv?.outfile) {
         conf.setConfig('outfile', conf?.config?._argv?.outfile)
-    }
-    if (conf?.config?._argv?.outfiletype && OUT_FILE_TYPE[conf?.config?._argv?.outfiletype]) {
-        conf.setConfig('outfiletype', conf?.config?._argv?.outfiletype)
     }
 }
 
